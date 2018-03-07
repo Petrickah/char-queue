@@ -1,0 +1,4 @@
+#ifndef POO_TEMA1_CHARQUEUE_H_
+#define POO_TEMA1_CHARQUEUE_H_
+
+#endif // POO_TEMA1_CHARQUEUE_H_
