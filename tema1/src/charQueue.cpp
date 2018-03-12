@@ -20,6 +20,15 @@ namespace Classes {
         CharQueue::CharQueue() {
             this->firstNode = this->lastNode = nullptr;
         }
+        CharQueue::CharQueue(CharQueue& obj) {
+            if(obj.isEmpty()) return;
+            this->firstNode = this->lastNode = new NodeClass::Node(obj.firstNode->getInfo());
+            NodeClass::Node* p = obj.firstNode;
+            while(p->getNextNode() != NULL) {
+                this->lastNode->setNextNode(new NodeClass::Node(p->getNextNode()->getInfo()));
+                p = p->getNextNode(); this->lastNode = this->lastNode->getNextNode();
+            }
+        }
         CharQueue::~CharQueue() {
             while(this->firstNode != this->lastNode){
                 NodeClass::Node* p = this->firstNode->getNextNode();
@@ -50,6 +59,27 @@ namespace Classes {
             if(this->firstNode)
                 this->firstNode = this->firstNode->getNextNode();
             return info;
+        }
+        std::ostream& operator<<(std::ostream& out, CharQueue& myQueue) {
+            while(!myQueue.isEmpty())
+                out<<myQueue.pop();
+            return out;
+        }
+        std::istream& operator>>(std::istream& in, CharQueue& myQueue) {
+            char str[250];
+            in.getline(str, 250);
+            int k=0;
+            while(str[k] != '\0'){
+                myQueue.push(str[k]);
+                k++;
+            }
+            return in;
+        }
+        CharQueue& CharQueue::operator+(CharQueue myQueue) {
+            CharQueue *myNewCharQueue = new CharQueue(myQueue);
+            this->lastNode->setNextNode(myNewCharQueue->firstNode);
+            this->lastNode = myNewCharQueue->lastNode;
+            return *this;
         }
     }
 }

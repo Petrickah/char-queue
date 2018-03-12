@@ -21,10 +21,14 @@ namespace Classes {
             NodeClass::Node* firstNode;
             NodeClass::Node* lastNode;
         public:
+            CharQueue(CharQueue& obj); 
             CharQueue(); ~CharQueue();
             bool isEmpty();
             void push(char myChar);
             char pop();
+            friend std::ostream& operator<<(std::ostream&, CharQueue&);
+            friend std::istream& operator>>(std::istream&, CharQueue&);
+            CharQueue& operator+(CharQueue myQueue);
         };
     }
 }
