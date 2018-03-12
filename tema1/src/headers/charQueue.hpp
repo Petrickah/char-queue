@@ -22,6 +22,9 @@ namespace Classes {
             NodeClass::Node* lastNode;
         public:
             CharQueue(); ~CharQueue();
+            bool isEmpty();
+            void push(char myChar);
+            char pop();
         };
     }
 }

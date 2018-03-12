@@ -12,7 +12,7 @@ namespace Classes {
             this->nextNode = nextNode; this->info = myInfo;
         }
         Node::~Node() {
-            delete this->nextNode;
+            this->info = '\0';
         }
     }
 
@@ -26,6 +26,30 @@ namespace Classes {
                 this->firstNode = p;
                 delete p;
             }
+        }
+        bool CharQueue::isEmpty() {
+            return (this->firstNode == nullptr && this->firstNode == this->lastNode);
+        }
+        void CharQueue::push(char myChar) {
+            if(isEmpty()){
+                this->firstNode = new NodeClass::Node(myChar);
+                this->lastNode = this->firstNode;
+            }
+            else{
+                this->lastNode->setNextNode(new NodeClass::Node(myChar));
+                this->lastNode = this->lastNode->getNextNode();
+            }
+        }
+        char CharQueue::pop() {
+            NodeClass::Node *p = this->firstNode;
+            char info = p->getInfo();
+            delete p;
+            if(this->firstNode == this->lastNode) {
+                this->firstNode = this->lastNode = nullptr;
+            }
+            if(this->firstNode)
+                this->firstNode = this->firstNode->getNextNode();
+            return info;
         }
     }
 }
