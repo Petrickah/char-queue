@@ -3,33 +3,34 @@
 
 #include <iostream>
 
-namespace NodeClass {
-    class Node {
-        char myChar; Node* nextNode;
-    public:
-        Node(char myChar); Node(); ~Node(); //Constructori + Destructori
-        //Metode
-        Node* getNextNode();
-        void setNextNode(Node* myNextNode);
-        char getChar();
-        void setChar(char myNewChar);
-    };
-}
+namespace Classes {
+    namespace NodeClass {
+        class Node {
+            char info; Node* nextNode;
+        public:
+            Node(); Node(char myInfo); Node(char myInfo, Node* nextNode); ~Node();
+            Node* getNextNode() { return nextNode; }
+            void setNextNode(Node* newNextNode) { nextNode = newNextNode; }
+            char getInfo() { return info; }
+            void setInfo(char myChar) { info = myChar; }
+        };
+    }
 
-namespace CharQueueClass {
-    class CharQueue {
-        NodeClass::Node* firstNode, *lastNode;
-    public:
-        CharQueue(); ~CharQueue(); //Constructor + Destructor
-        //Metode
-        void push(char myChar);
-        char pop();
-        bool isEmpty();
-        friend std::ostream& operator<<(std::ostream& out, CharQueue myQueue);
-        friend std::istream& operator>>(std::istream& in, CharQueue& myQueue);
-        CharQueue& operator+(CharQueue myQueue);
-        CharQueue& operator-(CharQueue myQueue);
-    };
+    namespace CharQueueClass {
+        class CharQueue {
+            NodeClass::Node* firstNode;
+            NodeClass::Node* lastNode;
+        public:
+            CharQueue(CharQueue& obj); 
+            CharQueue(); ~CharQueue();
+            bool isEmpty();
+            void push(char myChar);
+            char pop();
+            friend std::ostream& operator<<(std::ostream&, CharQueue&);
+            friend std::istream& operator>>(std::istream&, CharQueue&);
+            CharQueue& operator+(CharQueue myQueue);
+        };
+    }
 }
 
 #endif // POO_TEMA1_CHARQUEUE_H_

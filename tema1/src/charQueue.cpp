@@ -1,63 +1,85 @@
 #include "headers/charQueue.hpp"
 
-namespace NodeClass {
-    Node::Node(char myChar) { this->myChar = myChar; nextNode = nullptr; }
-    Node::Node() { this->myChar = '\0'; nextNode = nullptr; }
-    Node::~Node() { 
-        while(nextNode != nullptr) {
-            delete this->nextNode;
-            this->nextNode = this->nextNode->nextNode;
+namespace Classes {
+    namespace NodeClass {
+        Node::Node() {
+            this->nextNode = nullptr; this->info = '\0';
         }
-    }
-    Node* Node::getNextNode() { return this->nextNode; }
-    void Node::setNextNode(Node* myNextNode) { this->nextNode = myNextNode; }
-    char Node::getChar() { return this->myChar; }
-    void Node::setChar(char myNewChar) { this->myChar = myNewChar; }
-}
-
-namespace CharQueueClass {
-    CharQueue::CharQueue() { this->firstNode = nullptr; this->lastNode = nullptr; }
-    CharQueue::~CharQueue() {
-        while(firstNode != lastNode) {
-            NodeClass::Node *p = firstNode->getNextNode();
-            delete firstNode;
-            firstNode = p;
+        Node::Node(char myInfo) {
+            this->nextNode = nullptr; this->info = myInfo;
         }
-        delete lastNode;
-    }
-    bool CharQueue::isEmpty() {
-        return (this->firstNode == this->lastNode && this->firstNode == nullptr);
-    }
-    void CharQueue::push(char myChar) {
-        if(isEmpty())
-            firstNode = lastNode = new NodeClass::Node(myChar);
-        else {
-            lastNode->setNextNode(new NodeClass::Node(myChar));
-            this->lastNode = lastNode->getNextNode();
+        Node::Node(char myInfo, Node* nextNode) {
+            this->nextNode = nextNode; this->info = myInfo;
         }
-    }
-    char CharQueue::pop() {
-        char myChar = '\0';
-        if(firstNode != nullptr) {
-            NodeClass::Node* p = firstNode->getNextNode();
-            myChar = firstNode->getChar();
-            delete firstNode;
-            firstNode = p;
+        Node::~Node() {
+            this->info = '\0';
         }
-        return myChar;
     }
 
-    std::ostream& operator<<(std::ostream& out, CharQueue myQueue) {
-        while(!myQueue.isEmpty()){
-            out<<myQueue.pop();
+    namespace CharQueueClass {
+        CharQueue::CharQueue() {
+            this->firstNode = this->lastNode = nullptr;
         }
-    }
-    std::istream& operator>>(std::istream& in, CharQueue& myQueue) {
-        char str[250];
-        in.getline(str, 250);
-        for(char myChar: str) {
-            myQueue.push(myChar);
+        CharQueue::CharQueue(CharQueue& obj) {
+            if(obj.isEmpty()) return;
+            this->firstNode = this->lastNode = new NodeClass::Node(obj.firstNode->getInfo());
+            NodeClass::Node* p = obj.firstNode;
+            while(p->getNextNode() != NULL) {
+                this->lastNode->setNextNode(new NodeClass::Node(p->getNextNode()->getInfo()));
+                p = p->getNextNode(); this->lastNode = this->lastNode->getNextNode();
+            }
         }
-        return in;
+        CharQueue::~CharQueue() {
+            while(this->firstNode != this->lastNode){
+                NodeClass::Node* p = this->firstNode->getNextNode();
+                this->firstNode = p;
+                delete p;
+            }
+        }
+        bool CharQueue::isEmpty() {
+            return (this->firstNode == nullptr && this->firstNode == this->lastNode);
+        }
+        void CharQueue::push(char myChar) {
+            if(isEmpty()){
+                this->firstNode = new NodeClass::Node(myChar);
+                this->lastNode = this->firstNode;
+            }
+            else{
+                this->lastNode->setNextNode(new NodeClass::Node(myChar));
+                this->lastNode = this->lastNode->getNextNode();
+            }
+        }
+        char CharQueue::pop() {
+            NodeClass::Node *p = this->firstNode;
+            char info = p->getInfo();
+            delete p;
+            if(this->firstNode == this->lastNode) {
+                this->firstNode = this->lastNode = nullptr;
+            }
+            if(this->firstNode)
+                this->firstNode = this->firstNode->getNextNode();
+            return info;
+        }
+        std::ostream& operator<<(std::ostream& out, CharQueue& myQueue) {
+            while(!myQueue.isEmpty())
+                out<<myQueue.pop();
+            return out;
+        }
+        std::istream& operator>>(std::istream& in, CharQueue& myQueue) {
+            char str[250];
+            in.getline(str, 250);
+            int k=0;
+            while(str[k] != '\0'){
+                myQueue.push(str[k]);
+                k++;
+            }
+            return in;
+        }
+        CharQueue& CharQueue::operator+(CharQueue myQueue) {
+            CharQueue *myNewCharQueue = new CharQueue(myQueue);
+            this->lastNode->setNextNode(myNewCharQueue->firstNode);
+            this->lastNode = myNewCharQueue->lastNode;
+            return *this;
+        }
     }
 }
