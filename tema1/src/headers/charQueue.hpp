@@ -20,6 +20,7 @@ namespace Classes {
         class CharQueue {
             NodeClass::Node* firstNode;
             NodeClass::Node* lastNode;
+            int size;
         public:
             CharQueue(CharQueue& obj); 
             CharQueue(); ~CharQueue();
@@ -29,6 +30,7 @@ namespace Classes {
             friend std::ostream& operator<<(std::ostream&, CharQueue&);
             friend std::istream& operator>>(std::istream&, CharQueue&);
             CharQueue& operator+(CharQueue myQueue);
+            CharQueue& operator-(CharQueue myQueue);
         };
     }
 }

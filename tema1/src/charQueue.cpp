@@ -18,7 +18,7 @@ namespace Classes {
 
     namespace CharQueueClass {
         CharQueue::CharQueue() {
-            this->firstNode = this->lastNode = nullptr;
+            this->firstNode = this->lastNode = nullptr; this->size = 0;
         }
         CharQueue::CharQueue(CharQueue& obj) {
             if(obj.isEmpty()) return;
@@ -28,6 +28,7 @@ namespace Classes {
                 this->lastNode->setNextNode(new NodeClass::Node(p->getNextNode()->getInfo()));
                 p = p->getNextNode(); this->lastNode = this->lastNode->getNextNode();
             }
+            this->size = obj.size;
         }
         CharQueue::~CharQueue() {
             while(this->firstNode != this->lastNode){
@@ -35,6 +36,7 @@ namespace Classes {
                 this->firstNode = p;
                 delete p;
             }
+            this->size = 0;
         }
         bool CharQueue::isEmpty() {
             return (this->firstNode == nullptr && this->firstNode == this->lastNode);
@@ -43,18 +45,20 @@ namespace Classes {
             if(isEmpty()){
                 this->firstNode = new NodeClass::Node(myChar);
                 this->lastNode = this->firstNode;
+                this->size = 1;
             }
             else{
                 this->lastNode->setNextNode(new NodeClass::Node(myChar));
                 this->lastNode = this->lastNode->getNextNode();
+                this->size++;
             }
         }
         char CharQueue::pop() {
             NodeClass::Node *p = this->firstNode;
             char info = p->getInfo();
-            delete p;
+            delete p; this->size --;
             if(this->firstNode == this->lastNode) {
-                this->firstNode = this->lastNode = nullptr;
+                this->firstNode = this->lastNode = nullptr; this->size = 0;
             }
             if(this->firstNode)
                 this->firstNode = this->firstNode->getNextNode();
@@ -76,10 +80,26 @@ namespace Classes {
             return in;
         }
         CharQueue& CharQueue::operator+(CharQueue myQueue) {
-            CharQueue *myNewCharQueue = new CharQueue(myQueue);
-            this->lastNode->setNextNode(myNewCharQueue->firstNode);
-            this->lastNode = myNewCharQueue->lastNode;
-            return *this;
+            CharQueue *myNewQueue = new CharQueue(myQueue);
+            CharQueue *myThisQueue = new CharQueue(*this);
+            myThisQueue->lastNode->setNextNode(myNewQueue->firstNode);
+            myThisQueue->lastNode = myNewQueue->lastNode;
+            myThisQueue->size = myThisQueue->size + myNewQueue->size;
+            return *myThisQueue;
+        }
+        CharQueue& CharQueue::operator-(CharQueue myQueue) {
+            CharQueue *myNewQueue = new CharQueue(myQueue);
+            CharQueue *myThisQueue = new CharQueue(*this);
+
+            auto minSizeQueue = (myNewQueue->size < myThisQueue->size)?myNewQueue:myThisQueue;
+            auto otherQueue = (minSizeQueue != myNewQueue)?myNewQueue:minSizeQueue;
+
+            CharQueue* resultQueue = new CharQueue();
+            while(!minSizeQueue->isEmpty()) {
+                char firstChar = minSizeQueue->pop(); char secondChar = otherQueue->pop();
+                (firstChar > secondChar)?resultQueue->push(firstChar):resultQueue->push(secondChar);
+            }
+            return *resultQueue;
         }
     }
 }
