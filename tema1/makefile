@@ -6,4 +6,5 @@ bin/main.o bin/charQueue.o: src/main.cpp src/charQueue.cpp
 tema1: bin/main.o bin/charQueue.o
 	g++ -o tema1 bin/main.o bin/charQueue.o
 
-clean: rm bin/*.o tema1
+clean: 
+	rm bin/*.o tema1
